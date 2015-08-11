@@ -1,0 +1,42 @@
+{
+  "port": 8080,
+  "udp_port": 8086,
+  "lg_iface_base": "http://lg1:81",
+  "earth_pos_url": "http://lg-head:8888/window.json?window_slug=earth_center",
+  "provider":2,
+  "tencentKey":"S5PBZ-MX53W-2AHRY-R7Y5S-WTCW6-OLFRF",
+  "baiduKey":"pBjThwegIuaiKzPWNgqVNkID",
+  "touchscreen": {
+    "default_center": [{"lat":37.5584589,"lng":-122.5142956},{"lat":39.882326,"lng":116.336088},{"lat":40.013812,"lng":116.34189}],
+    "poi_url": "/touchscreen/poi-defaults.json",
+    "activities": [
+	  { "title": "Google Earth", "app": "earth" }
+		],
+		"provider":[
+	  { "title": "Google", "app": "google" },
+	  { "title": "Tencent", "app": "tencent"},
+	  { "title": "Baidu", "app": "baidu"}
+    ],
+    "show_photospheres": true,
+    "show_zoomctl": true,
+    "show_maptypectl": true,
+    "font_scale": 1.0,
+    "default_maptype": ["ROADMAP"],
+    "show_poi": false,
+    "show_activities":false,
+		"zoom": [14,13,16]
+  },
+  "display": {
+    "default_pano": ["UYGvRWh7D6YAAAQfCLlxzg","10011039131107135744500","01002200001309101438522475L"],
+    "zoom": 1,
+    "mode": "html4",
+    "show_links": true,
+		"move_Range":5
+  },
+	"device":{
+	  "device_offset": 24,
+		"type_offset": 16,
+		"code_offset": 18,
+		"value_offset": 20
+	}
+}
