@@ -53,7 +53,7 @@ define(['baidumaps','tencentmaps','googlemaps','BmapLib','config','jquery'], fun
    var tencentKey = config.tencentKey;
    var baiduKey = config.baiduKey;
    var StreetViewStatus = {
-	OK: GMaps.StreetViewStatus.OK,
+	  OK: GMaps.StreetViewStatus.OK,
    };
    
 	function SetProvider(app) {
@@ -125,7 +125,7 @@ define(['baidumaps','tencentmaps','googlemaps','BmapLib','config','jquery'], fun
    }
    
 
-    // street view service
+/*     // street view service
 	function PanoSvFrom() {
 	  var sv;
 	  switch(apiProvider)
@@ -222,9 +222,80 @@ define(['baidumaps','tencentmaps','googlemaps','BmapLib','config','jquery'], fun
 			break;
 	  }
    };
-	  
-		function getPanoramaByOffset(from, distance, heading, maxDis, cb, panoid, dir)
-  {
+	   */
+	
+		 
+	
+	var tmpsv = new BMaps.PanoramaService();	 
+	function StreetViewService(){
+	  var sv;
+	  switch(apiProvider)
+	  {
+	  case 1:
+			sv = new GMaps.StreetViewService();
+	    break;
+			
+	  case 2:		
+			sv = new QMaps.PanoramaService();
+			sv.getPanoramaById = function(panoid,cb){
+				var data = null;
+				console.log(panoid);
+				if (panoid.match(/^\w+$/)){		
+				$.getJSON("http://apis.map.qq.com/ws/streetview/v1/getpano?id="+panoid+"&radius=50&key="+tencentKey+"&output=jsonp&callback=?",
+					function(ret) {
+					console.log(ret);
+					if(ret.status == 0){
+						data = {location: {pano:ret.detail.id,latLng: new QMaps.LatLng(ret.detail.location.lat,ret.detail.location.lng),description:ret.detail.description}};
+						//data = {location: {pano:ret.detail.id,latLng:ret.detail.location,description:ret.detail.description}};
+						cb(data,StreetViewStatus.OK);
+					}	 
+				});
+			}};
+			
+			sv.getPanoramaByLocation = function(position, radius, cb){
+				sv.getPano(position,radius,function(ret){
+				if(ret != null){
+					data = {location: {pano:ret.id,latLng:ret.latlng,description:ret.description} };
+					cb(data,StreetViewStatus.OK);
+				}	 
+	     });
+			};
+	    break;
+			
+	  case 3:
+			sv = new BMaps.PanoramaService(); 
+			sv.getPanoramaById = function(panoid,cb){
+				tmpsv.getPanoramaById(panoid,
+				function(ret){
+					if (ret == null) 	return;  
+					data = {
+						location: {pano:ret.id,latLng:ret.position,description:ret.description},
+						links:ret.links,
+						tiles:ret.tiles
+					};
+					cb(data,StreetViewStatus.OK);	
+				});		
+			};
+			
+			sv.getPanoramaByLocation = function(position,radius,cb){
+				tmpsv.getPanoramaByLocation(position,radius,function(ret){
+					if (ret == null) 	return;  
+					data = {
+						location: {pano:ret.id,latLng:ret.position,description:ret.description},
+						links:ret.links,
+						tiles:ret.tiles
+					};
+					cb(data,StreetViewStatus.OK);	
+				});	
+			};	
+			break;
+		}
+	  return sv;
+   }
+		 
+		 
+  function getPanoramaByOffset(from, distance, heading, maxDis, cb, panoid, dir)
+	{
 		var sv_svc =  new QMaps.PanoramaService();
     var nextLoc = QMaps.geometry.spherical.computeOffset(from, dir*distance, heading);
 		var search_opts = {
@@ -765,7 +836,29 @@ define(['baidumaps','tencentmaps','googlemaps','BmapLib','config','jquery'], fun
 	  }
 	  return nPoiArr;
    }
-   
+   	
+	
+	function decompLatlng(latlng, cb){
+		switch(apiProvider){
+		case 1:
+			lat = latlng.lat();
+			lbg = latlng.lng();
+			cb(lat,lng);
+			break;
+		case 2:
+			lat = latlng.lat;
+			lng = latlng.lng;
+			cb(lat,lng);
+			break;
+		case 3:
+			lat = latlng.lat;
+			lng = latlng.lng;
+			cb(lat,lng);
+			break;
+		}
+	}
+
+	 
   return{
 	apiProvider: apiProvider,
 	StreetViewStatus: StreetViewStatus,
@@ -799,6 +892,7 @@ define(['baidumaps','tencentmaps','googlemaps','BmapLib','config','jquery'], fun
 	MarkerIndex:MarkerIndex,
 	SetProvider:SetProvider,
 	DeletePoi:DeletePoi,
+	//serializePanoData:serializePanoData
   }
 });
 

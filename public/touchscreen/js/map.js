@@ -88,12 +88,11 @@ function(
       this.click_search.on('search_result', function(panodata) {
         var latlng = panodata.location.latLng;
         var panoid = panodata.location.pano;
-
         self._broadcast_pano(panoid);
         self._pan_map(latlng);
         self.sv_marker.move(latlng);
       });
-
+			
       // handler for earth position report
       this.earth_pos.on('found_location', function(panodata) {
         var latlng = panodata.location.latLng;

@@ -64,16 +64,17 @@ define(['googlemaps','mergemaps'], function(GMaps,XMaps) {
     delete this;
   }
 
+	 		 
   // make StreetViewPanoramaData friendlier
-  function serializePanoData(panoData) {
-    panoData.location.latLng = XMaps.LatLng({
-		//lat: panoData.location.latLng.lat(),
-    //lng: panoData.location.latLng.lng()
-	  lat: panoData.location.latLng.lat,
-	  lng: panoData.location.latLng.lng
-    });
-  }
-
+   function serializePanoData(panoData) {
+		 if(XMaps.Apiprovider == 1){
+      panoData.location.latLng = XMaps.LatLng({
+	    lat: panoData.location.latLng.lat(),
+	    lng: panoData.location.latLng.lng()
+      });
+		 }
+  } 
+	 
 	
   return {
     // passthrough ID search
